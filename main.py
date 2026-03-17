@@ -68,6 +68,7 @@ report.save(os.path.join('out_report', 'report.html'), overwrite=True)
 raw.save(os.path.join('out_dir', 'raw.fif'), overwrite=True)
 
 # == CREATE PRODUCT JSON ==
-product_json = create_product_json()
-add_info_to_product(product_json, f"FIF file refined and standardized successfully")
-add_raw_info_to_product(product_json, raw)
+product_items = []
+add_info_to_product(product_items, f"FIF file refined and standardized successfully")
+add_raw_info_to_product(product_items, raw)
+create_product_json(product_items)
