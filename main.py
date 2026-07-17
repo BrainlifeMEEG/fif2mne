@@ -62,7 +62,7 @@ info_str = str(raw.info)
 report.add_text(info_str, 'Channel Information')
 
 # Save report
-report.save(os.path.join('out_report', 'report.html'), overwrite=True)
+report.save(os.path.join('out_report', 'report.html'), overwrite=True, verbose=False)
 
 # == SAVE OUTPUT ==
 raw.save(os.path.join('out_dir', 'raw.fif'), overwrite=True)
