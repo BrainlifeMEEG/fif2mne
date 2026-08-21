@@ -10,10 +10,9 @@
 #
 # Author: Guiomar Niso
 
-# make output directory
-mkdir -p out_dir
+set -e
+set -x
 
 #python main.py
 singularity exec docker://brainlifemeeg/mne:1.12.1 python3 main.py
-
 
