@@ -24,6 +24,7 @@ Output:
 
 import sys
 import os
+import html
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'brainlife_utils'))
 
 # Standard imports
@@ -86,7 +87,8 @@ for i, fname in enumerate(fnames, start=1):
     report.add_raw(raw=raw, title=f'Raw Data{label}')
 
     # Add channel information to report
-    report.add_text(str(raw.info), f'Channel Information{label}')
+    info_html = f'<pre>{html.escape(str(raw.info))}</pre>'
+    report.add_html(title=f'Channel Information{label}', html=info_html)
 
     # Save output: keep the single-file name for backward compatibility,
     # otherwise disambiguate outputs with a per-file index.
