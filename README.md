@@ -1,7 +1,9 @@
 # app-fif2mne
 
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
-[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.632-blue.svg)](https://doi.org/10.25663/brainlife.app.632)
+[![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-FIF_to_MNE_Raw-blue.svg)](https://brainlife.io/app/6a8d9b56ad4d4a4b5327f838)
+
+Supersedes the original single-file `bl.app.632` registration (owned by a different brainlife.io account and not updatable from this repo).
 
 ## Documentation
 Converts MEG `fif` file(s) to MNE raw data, using `mne.io.read_raw_fif` function from MNE-python. Accepts either a single file or several; each input file is refined and saved independently (not concatenated).
