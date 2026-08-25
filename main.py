@@ -1,15 +1,16 @@
 """
 Refine and convert MNE FIF files.
 
-This app loads MNE-compatible .fif files and re-saves them for data standardization.
-It generates a report with channel information and ensures consistent data format
-across different processing pipelines.
+This app loads one or more MNE-compatible .fif files and re-saves them for
+data standardization. It generates a report with channel information and
+ensures consistent data format across different processing pipelines.
 
 Input:
-    - fif: Path to MNE FIF (.fif) file
+    - fif: Path to an MNE FIF (.fif) file, or a list of paths to several
 
 Output:
-    - out_dir/raw.fif: Refined MNE raw data file
+    - out_dir/raw.fif: Refined MNE raw data file (single input file)
+      or out_dir/raw_<n>.fif per input file when several fif files are given
     - out_report/report.html: QC report with channel information
     - product.json: Metadata with channel info
 """
@@ -48,27 +49,35 @@ ensure_output_dirs('out_dir', 'out_report')
 config = load_config()
 
 # == LOAD DATA ==
-fname = config['fif']
-
-# Read FIF raw data
-raw = mne.io.read_raw_fif(fname)
+fnames = config['fif']
+if isinstance(fnames, str):
+    fnames = [fnames]
 
 # == CREATE REPORT ==
 report = mne.Report(title='FIF File Refinement Report')
-report.add_raw(raw=raw, title='Raw Data')
 
-# Add channel information to report
-info_str = str(raw.info)
-report.add_text(info_str, 'Channel Information')
+# == PROCESS EACH FILE ==
+product_items = []
+for i, fname in enumerate(fnames, start=1):
+    # Read FIF raw data
+    raw = mne.io.read_raw_fif(fname)
+
+    label = f' ({os.path.basename(fname)})' if len(fnames) > 1 else ''
+    report.add_raw(raw=raw, title=f'Raw Data{label}')
+
+    # Add channel information to report
+    report.add_text(str(raw.info), f'Channel Information{label}')
+
+    # Save output: keep the single-file name for backward compatibility,
+    # otherwise disambiguate outputs with a per-file index.
+    out_name = 'raw.fif' if len(fnames) == 1 else f'raw_{i}.fif'
+    raw.save(os.path.join('out_dir', out_name), overwrite=True)
+
+    add_info_to_product(product_items, f"FIF file refined and standardized: {os.path.basename(fname)}")
+    add_raw_info_to_product(product_items, raw)
 
 # Save report
 report.save(os.path.join('out_report', 'report.html'), overwrite=True, verbose=False)
 
-# == SAVE OUTPUT ==
-raw.save(os.path.join('out_dir', 'raw.fif'), overwrite=True)
-
 # == CREATE PRODUCT JSON ==
-product_items = []
-add_info_to_product(product_items, f"FIF file refined and standardized successfully")
-add_raw_info_to_product(product_items, raw)
 create_product_json(product_items)

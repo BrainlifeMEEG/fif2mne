@@ -4,12 +4,12 @@
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.632-blue.svg)](https://doi.org/10.25663/brainlife.app.632)
 
 ## Documentation
-Converts MEG `fif` files to MNE raw data, using `mne.io.read_raw_fif` function from MNE-python.
+Converts MEG `fif` file(s) to MNE raw data, using `mne.io.read_raw_fif` function from MNE-python. Accepts either a single file or several; each input file is refined and saved independently (not concatenated).
 
 1) Input file is:
-    * `meg/fif` meg data file
+    * `meg/fif` meg data file, or a list of several
 2) Ouput files are:
-    * `meeg/mne/raw` meg raw.fif data file
+    * `meeg/mne/raw` meg raw.fif data file (`raw.fif` for a single input; `raw_1.fif`, `raw_2.fif`, ... when several files are given)
 
 ## Authors
 - [Guiomar Niso](guiomar.niso@ctb.upm.es), Instituto Cajal, CSIC, Spain
