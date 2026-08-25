@@ -49,7 +49,27 @@ ensure_output_dirs('out_dir', 'out_report')
 config = load_config()
 
 # == LOAD DATA ==
-fnames = config['fif']
+fnames = config.get('fif')
+
+# Validate fif: must be a non-empty string, or a non-empty list of non-empty strings
+valid_fnames = (
+    (isinstance(fnames, str) and fnames)
+    or (
+        isinstance(fnames, list)
+        and fnames
+        and all(isinstance(f, str) and f for f in fnames)
+    )
+)
+if not valid_fnames:
+    product_items = []
+    add_info_to_product(
+        product_items,
+        f"Invalid or missing 'fif' config value: {fnames!r}. Must be a non-empty file path string or a non-empty list of non-empty file path strings.",
+        'error'
+    )
+    create_product_json(product_items)
+    sys.exit(1)
+
 if isinstance(fnames, str):
     fnames = [fnames]
 
