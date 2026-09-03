@@ -7,6 +7,11 @@ ensures consistent data format across different processing pipelines.
 
 Input:
     - fif: Path to an MNE FIF (.fif) file, or a list of paths to several
+    - channel_types: Optional comma-separated channel-type reassignments,
+      format "chan_name-new_type,chan_name2-new_type2" (e.g. a system that
+      digitizes EOG/ECG through spare EEG channels; MNE's set_channel_types)
+    - rename_channels: Optional comma-separated channel renames, format
+      "old_name-new_name,old_name2-new_name2" (MNE's rename_channels)
 
 Output:
     - out_dir/raw.fif: Refined MNE raw data file (single input file)
@@ -77,11 +82,32 @@ if isinstance(fnames, str):
 # == CREATE REPORT ==
 report = mne.Report(title='FIF File Refinement Report')
 
+# Optional channel-type/name fixups (e.g. a system that digitizes EOG/ECG
+# through spare EEG amplifier channels, so they arrive labeled as plain EEG
+# and need retyping before anything downstream can find them by type or by
+# their real name -- Wakeman & Henson ds000117 does exactly this, see
+# original_scripts/04-python_filtering.py). Off by default (empty/unset):
+# every other dataset/caller is unaffected. Same "old-new,old2-new2" format
+# as add-montage's own rename_channels, for consistency.
+def _parse_pairs(s):
+    if not s or s == 'None':
+        return {}
+    return dict(x.strip().split('-', 1) for x in s.split(','))
+
+
+channel_types = _parse_pairs(config.get('channel_types'))
+rename_channels = _parse_pairs(config.get('rename_channels'))
+
 # == PROCESS EACH FILE ==
 product_items = []
 for i, fname in enumerate(fnames, start=1):
     # Read FIF raw data
     raw = mne.io.read_raw_fif(fname)
+
+    if channel_types:
+        raw.set_channel_types(channel_types)
+    if rename_channels:
+        raw.rename_channels(rename_channels)
 
     label = f' ({os.path.basename(fname)})' if len(fnames) > 1 else ''
     report.add_raw(raw=raw, title=f'Raw Data{label}')
