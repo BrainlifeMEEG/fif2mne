@@ -85,9 +85,8 @@ report = mne.Report(title='FIF File Refinement Report')
 # Optional channel-type/name fixups (e.g. a system that digitizes EOG/ECG
 # through spare EEG amplifier channels, so they arrive labeled as plain EEG
 # and need retyping before anything downstream can find them by type or by
-# their real name -- Wakeman & Henson ds000117 does exactly this, see
-# original_scripts/04-python_filtering.py). Off by default (empty/unset):
-# every other dataset/caller is unaffected. Same "old-new,old2-new2" format
+# their real name). Off by default (empty/unset): every other recording and
+# caller is unaffected. Same "old-new,old2-new2" format
 # as add-montage's own rename_channels, for consistency.
 def _parse_pairs(s):
     if not s or s == 'None':
